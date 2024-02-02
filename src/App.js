@@ -18,12 +18,24 @@ const useField = (type) => {
 const useCountry = (name) => {
   const [country, setCountry] = useState(null)
 
-  useEffect(() => {})
+  useEffect(() => {
+    if (name === '') return
+    async function fetch() {
+      try {
+        const res = await axios.get(`https://studies.cs.helsinki.fi/restcountries/api/name/${name}`)
+        setCountry({ ...country, found: true, data: res.data })
+      } catch (error) {
+        setCountry({ ...country, found: false, data: null })
+      }
+    }
+    fetch(name)
+  }, [name])
 
   return country
 }
 
 const Country = ({ country }) => {
+  console.log("🚀 ~ Country ~ country:", country)
   if (!country) {
     return null
   }
@@ -38,10 +50,10 @@ const Country = ({ country }) => {
 
   return (
     <div>
-      <h3>{country.data.name} </h3>
+      <h3>{country.data.name.common} </h3>
       <div>capital {country.data.capital} </div>
-      <div>population {country.data.population}</div> 
-      <img src={country.data.flag} height='100' alt={`flag of ${country.data.name}`}/>  
+      <div>population {country.data.population}</div>
+      <img src={country.data.flag} height='100' alt={`flag of ${country.data.name}`} />
     </div>
   )
 }
